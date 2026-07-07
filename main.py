@@ -1,7 +1,7 @@
 import requests
 import os
 from dotenv import load_dotenv
-import csv
+import json
 import datetime as dt
 
 load_dotenv()
@@ -15,13 +15,13 @@ AGE = 27
 GENDER = 'male'
 
 # Supported activities:
-# Running/Jogging - "ran for 30 minutes", "jogged 2 miles"
-# Swimming - "swam for 1 hour", "swimming laps"
-# Walking - "walked 3 miles", "brisk walk 45 min"
-# Cycling - "biked for 1 hour", "rode bike 10 miles"
-# Weightlifting - "lifted weights 45 min", "weight training"
+# Running/Jogging - 'ran for 30 minutes', 'jogged 2 miles'
+# Swimming - 'swam for 1 hour', 'swimming laps'
+# Walking - 'walked 3 miles', 'brisk walk 45 min'
+# Cycling - 'biked for 1 hour', 'rode bike 10 miles'
+# Weightlifting - 'lifted weights 45 min', 'weight training'
 
-exercise = input('Which exercises you did ?: ')
+user_exercise = input('Which exercises you did?: ')
 
 url = 'https://app.100daysofpython.dev/v1/nutrition/natural/exercise'
 
@@ -31,7 +31,7 @@ headers = {
 }
 
 data = {
-    'query': exercise,
+    'query': user_exercise,
     'weight_kg': WEIGHT_KG,
     'height_cm': HEIGHT_CM,
     'age': AGE,
@@ -46,13 +46,34 @@ today = dt.datetime.now()
 date = today.strftime('%d/%m/%Y')
 time = today.strftime('%H:%M:%S')
 
+new_workouts = []
+
 for exercise in result['exercises']:
     print(exercise['name'])
     print(exercise['duration_min'])
     print(exercise['nf_calories'])
 
+    new_workout = {
+        'date': date,
+        'time': time,
+        'exercise': exercise['name'],
+        'duration': exercise['duration_min'],
+        'calories': exercise['nf_calories']
+    }
 
-    with open('workouts.csv', mode='a', newline='') as file:
-        writer = csv.writer(file)
+    new_workouts.append(new_workout)
 
-        writer.writerow([date, time, exercise['name'], exercise['duration_min'], exercise['nf_calories']])
+try:
+    with open('workouts.json', mode='r') as file:
+        workouts = json.load(file)
+
+except FileNotFoundError:
+    workouts = []
+
+except json.JSONDecodeError:
+    workouts = []
+
+workouts.extend(new_workouts)
+
+with open('workouts.json', mode='w') as file:
+    json.dump(workouts, file, indent=4)
