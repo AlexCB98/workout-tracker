@@ -49,10 +49,6 @@ time = today.strftime('%H:%M:%S')
 new_workouts = []
 
 for exercise in result['exercises']:
-    print(exercise['name'])
-    print(exercise['duration_min'])
-    print(exercise['nf_calories'])
-
     new_workout = {
         'date': date,
         'time': time,
