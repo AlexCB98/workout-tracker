@@ -1,6 +1,8 @@
 import requests
 import os
 from dotenv import load_dotenv
+import csv
+import datetime as dt
 
 load_dotenv()
 
@@ -12,7 +14,7 @@ HEIGHT_CM = 188
 AGE = 27
 GENDER = 'male'
 
-    # Supported activities:
+# Supported activities:
 # Running/Jogging - "ran for 30 minutes", "jogged 2 miles"
 # Swimming - "swam for 1 hour", "swimming laps"
 # Walking - "walked 3 miles", "brisk walk 45 min"
@@ -39,4 +41,12 @@ data = {
 response = requests.post(url, headers=headers, json=data)
 result = response.json()
 
-print(result)
+today = dt.datetime.now()
+
+date = today.strftime("%d/%m/%Y")
+time = today.strftime("%H:%M:%S")
+
+for exercise in result["exercises"]:
+    print(exercise["name"])
+    print(exercise["duration_min"])
+    print(exercise["nf_calories"])
