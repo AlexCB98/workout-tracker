@@ -43,10 +43,16 @@ result = response.json()
 
 today = dt.datetime.now()
 
-date = today.strftime("%d/%m/%Y")
-time = today.strftime("%H:%M:%S")
+date = today.strftime('%d/%m/%Y')
+time = today.strftime('%H:%M:%S')
 
-for exercise in result["exercises"]:
-    print(exercise["name"])
-    print(exercise["duration_min"])
-    print(exercise["nf_calories"])
+for exercise in result['exercises']:
+    print(exercise['name'])
+    print(exercise['duration_min'])
+    print(exercise['nf_calories'])
+
+
+    with open('workouts.csv', mode='a', newline='') as file:
+        writer = csv.writer(file)
+
+        writer.writerow([date, time, exercise['name'], exercise['duration_min'], exercise['nf_calories']])
